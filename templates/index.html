@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: white;
+            text-align: left;
+        }
+        .module {
+            font-weight: bold;
+            font-size: 24px;
+            color: #ffffff;
+            margin-top: 30px;
+            text-align: left;
+            padding: 10px;
+            background-color: #111;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .video-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .video-card {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            margin-top: 15px;
+            transition: transform 0.3s ease;
+        }
+        .video-card:hover {
+            transform: scale(1.05);
+        }
+        .video-thumbnail {
+            width: 200px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+        .video-title {
+            margin-top: 8px;
+            font-size: 16px;
+            color: #ffffff;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .download-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .download-link {
+            display: block;
+            color: #4DB8FF;
+            text-decoration: none;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+        #video-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            display: none;
+            width: 80vw;
+            max-width: 1000px;
+            text-align: center;
+        }
+        #video-player {
+            max-width: 100%;
+            max-height: 70vh;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #video-title {
+            color: white;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Gallery</h1>
+    {% for module, content in videos_by_module.items() %}
+        <div class="module">{{ module }}</div>
+        <div class="video-list">
+            {% for video in content.videos %}
+                <div class="video-card" onclick="playVideo('{{ video['filename'] }}', '{{ video['title'] }}')">
+                    <img src="{{ url_for('static', filename=video['thumbnail']) }}" alt="Thumbnail" class="video-thumbnail">
+                    <div class="video-title">{{ video['title'] }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="download-list">
+            {% for file in content.downloads %}
+                <a class="download-link" href="{{ url_for('download_file', filename=file['filename']) }}" download>
+                    Download: {{ file['title'] }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <div id="video-container">
+        <span class="close-btn" onclick="closeVideo()">&times;</span>
+        <div id="video-title"></div>
+        <video id="video-player" controls>
+            <source id="video-source" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <script>
+        function playVideo(filename, title) {
+            const videoContainer = document.getElementById('video-container');
+            const videoPlayer = document.getElementById('video-player');
+            const videoSource = document.getElementById('video-source');
+            const videoTitleElement = document.getElementById('video-title');
+            
+            videoSource.src = "/videos/" + encodeURIComponent(filename);
+            videoPlayer.load();
+            videoTitleElement.textContent = title;
+            videoContainer.style.display = 'block';
+        }
+
+        function closeVideo() {
+            const videoContainer = document.getElementById('video-container');
+            const videoPlayer = document.getElementById('video-player');
+            
+            videoPlayer.pause();
+            videoContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
