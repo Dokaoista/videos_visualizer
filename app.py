@@ -6,7 +6,7 @@ import unicodedata
 app = Flask(__name__)
 
 # Configuração das pastas
-BASE_VIDEO_FOLDER = 'D:\outros\Cursos\Desec Pentest Mobile\kodak-pentest-mobile-desec - OInimigo.wtf'  # Substitua pelo caminho correto
+BASE_VIDEO_FOLDER = ''  # Substitua pelo caminho correto das pastas dos vídeos
 THUMBNAIL_FOLDER = 'static/thumbnails'
 ALLOWED_EXTENSIONS = {'mp4', 'webm', 'ogg', 'ts'}
 
